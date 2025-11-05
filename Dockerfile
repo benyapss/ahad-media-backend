@@ -1,23 +1,23 @@
-# Gunakan versi Node yang stabil dan cocok untuk npm terbaru
+# Gunakan Node.js versi 20 Alpine (ringan dan stabil)
 FROM node:20-alpine
 
-# Buat folder kerja
+# Tentukan folder kerja
 WORKDIR /app
 
-# Salin file dependency
+# Salin file package.json dan package-lock.json
 COPY package*.json ./
 
-# Install dependency tanpa cache & dengan flag aman
-RUN npm ci --omit=dev --legacy-peer-deps
+# Install dependencies
+RUN npm install --legacy-peer-deps
 
-# Salin seluruh project
+# Salin semua file project
 COPY . .
 
 # Build NestJS project
-RUN npm run build
+RUN npx nest build
 
-# Port default NestJS
+# Buka port 3000
 EXPOSE 3000
 
-# Jalankan backend
+# Jalankan aplikasi
 CMD ["npm", "run", "start:prod"]
