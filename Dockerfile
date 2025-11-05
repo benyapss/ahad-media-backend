@@ -1,22 +1,26 @@
-# Gunakan Node.js versi 18 (stabil dan didukung Railway)
+# Gunakan Node.js versi 18 (stabil)
 FROM node:18
 
 # Set direktori kerja di dalam container
 WORKDIR /app
 
-# Salin package.json dan package-lock.json (kalau ada)
+# Salin file dependency lebih dulu
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+# Bersihkan cache dan pastikan npm terbaru
+RUN npm install -g npm@latest
+RUN npm cache clean --force
 
-# Salin semua file project ke dalam container
+# Install dependency project
+RUN npm install --legacy-peer-deps
+
+# Salin semua file project ke container
 COPY . .
 
 # Build project NestJS
 RUN npm run build
 
-# Expose port 3000 (NestJS default)
+# Buka port default NestJS
 EXPOSE 3000
 
 # Jalankan aplikasi
