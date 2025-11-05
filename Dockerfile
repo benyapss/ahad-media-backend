@@ -1,27 +1,23 @@
-# Gunakan Node.js versi 18 (stabil)
-FROM node:18
+# Gunakan versi Node yang stabil dan cocok untuk npm terbaru
+FROM node:20-alpine
 
-# Set direktori kerja di dalam container
+# Buat folder kerja
 WORKDIR /app
 
-# Salin file dependency lebih dulu
+# Salin file dependency
 COPY package*.json ./
 
-# Bersihkan cache dan pastikan npm terbaru
-RUN npm install -g npm@latest
-RUN npm cache clean --force
+# Install dependency tanpa cache & dengan flag aman
+RUN npm ci --omit=dev --legacy-peer-deps
 
-# Install dependency project
-RUN npm install --legacy-peer-deps
-
-# Salin semua file project ke container
+# Salin seluruh project
 COPY . .
 
-# Build project NestJS
+# Build NestJS project
 RUN npm run build
 
-# Buka port default NestJS
+# Port default NestJS
 EXPOSE 3000
 
-# Jalankan aplikasi
+# Jalankan backend
 CMD ["npm", "run", "start:prod"]
